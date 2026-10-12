@@ -1,0 +1,385 @@
+{
+  "requested_date": "2026-10-12",
+  "saved_at": "2026-10-12T18:18:15.939341+02:00",
+  "meals": [
+    {
+      "name": "TIP Burger s hovädzím mäskom, BBQ majonézou, volským okom a hranolkami",
+      "labels": [
+        "hovädzie"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 9.9,
+      "portion": "110g/150g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "Kuracie ragú so zeleninkou, zemiakovými plackami a syrom",
+      "labels": [
+        "hydina"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 7.9,
+      "portion": "140g/150g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "Zapekané baklažány ,,MELANZANE“ s paradajkovou omáčkou a listovým šalátom",
+      "labels": [
+        "zelenina"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 7.9,
+      "portion": "250g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "Vyprážaný syr s hranolkami a našou domácou tatárskou omáčkou",
+      "labels": [
+        "syr"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 7.9,
+      "portion": "140g/200g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "ŠPECIÁL Risotto z kalerábu s grilovaným pstruhom dúhovým, pohánkou a ružičkovým kelom",
+      "labels": [
+        "ryby",
+        "zelenina"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 13.9,
+      "portion": "250g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "ŠPECIÁL Hovädzí roastbeef s opekanými baby zemiakmi s tatárskou omáčkou a šalátikom",
+      "labels": [
+        "hovädzie"
+      ],
+      "restaurant": "Spilka",
+      "address": "Legionárska 8, Bratislava",
+      "price_eur": 14.9,
+      "portion": "130g/200g",
+      "soups": [
+        {
+          "name": "Mrkvový krém so zázvorom a krutónmi",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        },
+        {
+          "name": "Hovädzí vývar s rezancami, zeleninou, mäsom",
+          "portion": "0,25l",
+          "additional_price_eur": 1.99
+        }
+      ],
+      "source_url": "https://www.spilkarestaurant.sk/261012-spilka_menu_12-16_10_2026/"
+    },
+    {
+      "name": "Koreňová zelenina s čiernou šošovicou a cícerom, basmati ryža",
+      "labels": [
+        "zelenina"
+      ],
+      "restaurant": "Centrálna Klubovňa",
+      "address": "Krížna 64, Bratislava",
+      "price_eur": 7.0,
+      "portion": "350 g",
+      "soups": [
+        {
+          "name": "Fazuľová polievka s klobásou a špeclami",
+          "portion": "0,25 l",
+          "additional_price_eur": 1.5
+        }
+      ],
+      "source_url": "https://www.klubovna.sk/wp-content/uploads/KLUBOVNA_CK_DENNE_MENU_148x297_WEB-21.pdf"
+    },
+    {
+      "name": "Steak z bravčového karé, volské oko, varené zemiaky s vňaťou",
+      "labels": [
+        "bravčové"
+      ],
+      "restaurant": "Centrálna Klubovňa",
+      "address": "Krížna 64, Bratislava",
+      "price_eur": 7.4,
+      "portion": "320 g | 150 g",
+      "soups": [
+        {
+          "name": "Fazuľová polievka s klobásou a špeclami",
+          "portion": "0,25 l",
+          "additional_price_eur": 1.5
+        }
+      ],
+      "source_url": "https://www.klubovna.sk/wp-content/uploads/KLUBOVNA_CK_DENNE_MENU_148x297_WEB-21.pdf"
+    },
+    {
+      "name": "Gratinované gnocchi s lososom, špenátom a paradajkami",
+      "labels": [
+        "cestoviny",
+        "ryby"
+      ],
+      "restaurant": "Centrálna Klubovňa",
+      "address": "Krížna 64, Bratislava",
+      "price_eur": 8.2,
+      "portion": "300 g | 120 g",
+      "soups": [
+        {
+          "name": "Fazuľová polievka s klobásou a špeclami",
+          "portion": "0,25 l",
+          "additional_price_eur": 1.5
+        }
+      ],
+      "source_url": "https://www.klubovna.sk/wp-content/uploads/KLUBOVNA_CK_DENNE_MENU_148x297_WEB-21.pdf"
+    },
+    {
+      "name": "Vyprážaný brav. rezeň zemiaková kaša, obloha",
+      "labels": [
+        "bravčové"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "150g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Bravčový stroganov príloha, zel. obloha",
+      "labels": [
+        "bravčové"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "160g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Duo vyprážaný karfiol a syr, príloha, zel. obloha",
+      "labels": [
+        "syr",
+        "zelenina"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 8.0,
+      "portion": "200g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Segedínsky guláš knedľa",
+      "labels": [],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "220g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Lassagne Bolognese zeleninová obloha",
+      "labels": [
+        "cestoviny"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "220g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Tagliatelle kuracie mäso, lesné hríby, syrová omáčka",
+      "labels": [
+        "cestoviny",
+        "hydina"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "250g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Gril. kurací plátok zapekaný s Enciánom, príloha, obl.",
+      "labels": [
+        "hydina"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.1,
+      "portion": "120g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    },
+    {
+      "name": "Kurací perkelt halušky",
+      "labels": [
+        "cestoviny",
+        "hydina"
+      ],
+      "restaurant": "ALDA",
+      "address": "Račianska 35, Bratislava",
+      "price_eur": 7.5,
+      "portion": "220g",
+      "soups": [
+        {
+          "name": "Kurací vývar s rezancami",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        },
+        {
+          "name": "Hrachová s klobásou",
+          "portion": "0,2 l",
+          "additional_price_eur": 0.6
+        }
+      ],
+      "source_url": "https://www.aldajedalen.sk/"
+    }
+  ]
+}
