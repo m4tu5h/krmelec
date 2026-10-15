@@ -72,3 +72,179 @@ The notebook accepts meals only when the returned confirmed date matches the req
 Unverified dates produce no meals for that restaurant. The flat file currently does not distinguish a missing restaurant menu from one with no meals. Search can miss newly published or inaccessible menus. There is no scheduled collection, history, database or web app yet. The earlier Python prototype and its configuration remain separate from the active notebook.
 
 Next: review the structured results and then build a simple page that reads the saved JSON and filters by restaurant, price and labels. Collecting once daily will let the app reuse saved results without calling the agent for each visitor.
+
+
+## 2026-10-12 — First local web app
+
+Built a buildless HTML/CSS/JavaScript interface in Slovak. It reads `menus.json`, displays meals as cards, and filters by restaurant, intersecting labels, and maximum price including a selected soup. Soup totals are rounded to cents. Unknown prices stay unknown. The layout uses three columns on large screens, two on medium screens and one on phones, with collapsible filters and touch-friendly controls. Dates are displayed explicitly and old menus get a warning.
+
+Added `serve.py` using only the Python standard library. It serves the web folder and saved menus, keeping the project root outside the static web directory. No deployment or API requests are part of browsing. Refreshing the page loads the latest saved file.
+
+Verification: Python server compiled; the local endpoint returned the saved JSON; Chrome loaded and displayed all 17 meal cards, restaurant and label filters, soup selectors, prices and source links. Automated JavaScript checks with a simulated DOM passed for restaurant/label/price filters, soup totals (7.50 + 0.60 = 8.10), filter updates after soup selection, reset, unknown prices and rejecting unsafe source URL schemes. Native browser interaction was interrupted by changing browser state, so a physical-phone layout check remains incomplete.
+
+
+## 2026-10-13 — Reuse the supplied mobile-first design
+
+Replaced `web/index.html`, `web/style.css` and `web/app.js` with the supplied buildless design, preserving the wordmark, compact zebra meal rows, in-flow filter panel and native detail dialog. The reference files in Documents remain untouched. Its fictional `meals.js` data is not included: the app fetches the real root `menus.json` through the existing server.
+
+Updated the current filtering specification: OR within restaurant selections; OR within label selections (any selected label); AND between the restaurant and label groups. No selection means unrestricted. The previous all-labels rule is superseded. The design has no price-limit control or soup-total selector; soup options and additional prices are displayed in the meal detail. Unknown prices remain unknown. Replaced prototype/sample copy with actual menu dates and source information, including a stale-date message in the existing footer. No extractor or menu-data changes are required.
+
+Validation: automated JavaScript checks with a simulated DOM loaded all 17 real meals and verified any-label matching, multi-restaurant matching, intersection between groups, reset, detail content, unknown prices, filter-panel toggling and safe source links. No paid API requests were made. The redesigned page has not yet been visually checked in a browser or on a physical phone.
+
+
+## 2026-10-13 — Add Cafe & Restaurant Michaela
+
+Added the fourth restaurant to the notebook configuration with base website `https://www.restauraciamichaela.sk/` and search domain `restauraciamichaela.sk`. Its restaurant address is Kýčerského 10, Bratislava, corroborated by Waze and restaurant listings; the official homepage lists a different company registered address under “Sídlo spoločnosti”, which is not used as the restaurant location. Source: https://www.waze.com/live-map/directions/sk/bratislavsky-kraj/bratislava/cafe-restaurant-michaela?to=place.ChIJiSmXhFGJbEcRRiYQ6plRYIg
+
+The restaurant-list cell parses successfully and now has four entries. No paid menu extraction was run and `menus.json` was not changed. Rerun the restaurant-list and search cells, then save, to include verified Michaela meals in the app.
+
+
+## 2026-10-13 — Isolated Tavily search experiment
+
+Kept the current OpenAI search/extraction workflow unchanged as requested. Added `notebooks/02_tavily_search.ipynb` to test a single basic Tavily search for Spilka using domain restriction, requested date in the query, raw content and usage reporting. It uses the existing httpx/dotenv packages, disables auto-parameters and generated answers, and makes no OpenAI calls or menu-file writes. Added an empty `TAVILY_API_KEY` placeholder to `.env.example`; the real key belongs in local `.env`.
+
+This first experiment inspects search quality only. Tavily's free credits are limited; a later extraction call would still have model-token cost. No live Tavily search has been run by Codex.
+
+
+## 2026-10-13 — Tavily becomes the main search provider
+
+After the user reported that the isolated Tavily search worked, switched `01_menu_agent.ipynb` to a two-stage workflow: domain-restricted Tavily basic search, followed by OpenAI structured extraction without tools. Default extraction model: `gpt-4.1-mini`, configurable with `OPENAI_MODEL`. The active workflow requires both API keys. The previous `gpt-5.5` hosted-search notebook is preserved as `03_openai_web_search_backup.ipynb`, with outputs cleared; it is not automatically invoked.
+
+Search and extraction now have separate cells. Each restaurant gets one basic search; sources and reported credit usage remain in memory. Extraction can be retried without repeating searches. Sources are bounded to three results and 45,000 characters per result, with truncation marked. Empty source sets skip the extraction request. Date evidence must match the requested date, and accepted meal source URLs must come from the supplied results. Final JSON structure is unchanged, including soup options and Slovak labels. Saving rejects incomplete runs, changed restaurant configuration and results from the old provider path.
+
+Limitations: Tavily may return incomplete snippets or no usable PDF/image text. There is no automatic fetching/vision or search-provider fallback. The cheaper extraction model needs a fresh accuracy check against real restaurant menus. Search success alone does not validate end-to-end extraction. Existing `menus.json` has not been rewritten during this implementation. No live API requests were made by Codex.
+
+Validation: seven offline notebook tests exercise Tavily credit controls, tool-free extraction, repeat extraction without repeat search, date mismatch rejection, unsupported source rejection, empty results, configuration changes and compatible JSON saving. Full legacy test discovery also encountered the earlier prototype’s missing `beautifulsoup4` dependency; active notebook checks do not need that package.
+
+
+## 2026-10-13 — Diagnose failed retrieval; move to Tavily Research
+
+Saved diagnostics established both retrieval and extraction failures in the previous implementation. Spilka sources linked menus but were not followed; Klubovňa results were unrelated policies/news; Michaela returned a homepage with a daily-menu link; ALDA's returned text was for 7–13 September rather than 13 October. GPT-4.1 mini incorrectly accepted the three September 13 meals, assigned zero soup surcharge despite a 0.60 EUR condition, and labelled jam pancakes as cheese. The model-claimed date check was insufficient. The existing three-meal JSON is a failed test result, not verified current data.
+
+The user requested Tavily-only processing. The main notebook now uses Tavily Research `mini` with an output schema and a prompt requiring exploration of actual menu links/PDFs/images. A separate Tavily Extract call retrieves cited source contents for Python verification. There is no OpenAI client, model call or extraction stage in the active path. The previous failed notebook and diagnostics are retained in `04_tavily_search_gpt_backup.ipynb`.
+
+Added `tavily_agent.py` to keep notebook cells short. It stores task IDs and raw responses under ignored `data/tavily-research/`, resumes matching tasks, and polls only when the user runs the status cell. Completed Research and retrieval results are reused. Uncertain task submissions are not automatically retried. Research domain preferences are soft, so accepted URLs must be official or external menu assets linked by retrieved official source content.
+
+Verification checks quoted dates against retrieved text, parses explicit calendar dates/common dated-week ranges without guessing the year, and checks requested-day headings and price quotes. It rejects the September/October mismatch and zero soup surcharge lacking inclusion evidence. A cheese label requires explicit cheese ingredient wording. Pending, failed, empty or unverifiable restaurant results block batch saving. JSON is replaced atomically only after verification of every selected restaurant. These conservative rules can reject legitimate wording; they do not prove completeness, every pairing condition, or every label. Source text may still be unavailable for image/PDF menus, and no bypass is attempted.
+
+Research is not the basic free-credit search experiment: documented `mini` research bounds are 4–110 credits per request, plus Extract usage. It may be more expensive overall. This is stated in the notebook before submission. Tasks are not submitted automatically by implementation/tests.
+
+Validation: 12 offline tests pass, covering date formats, old-month rejection, invented quotes/prices, wrong weekday, soup inclusion, cheese-label regression, task resumption, source retrieval reuse, uncertain-submission handling, app-compatible saving and refusal to overwrite on unverified results. The active notebook has no OpenAI dependency in its code cells. No live API tasks were created by Codex; account access and live menu accuracy still need testing. Existing `menus.json` remains unchanged until the user runs a successful save.
+
+
+## 2026-10-13 — Diagnose Research HTTP 400
+
+The first live Research submission was rejected with HTTP 400. The traceback alone does not contain Tavily's response body, so the cause (schema, parameter validation or account restriction) is not yet established. Updated the helper to surface the server response body and persist definite client rejections separately from uncertain network submissions. The specific Spilka submission was marked rejected based on the user's traceback. Future explicit retries are allowed for rejected submissions; ambiguous failures remain protected against duplicate tasks. Added an offline test for visible rejection details and retry behaviour. No live retry was made by Codex.
+
+
+## 2026-10-13 — Fix Tavily Research output-schema format
+
+Tavily's returned error established the exact HTTP 400 cause: only `properties` and `required` are allowed at the schema root, but Pydantic emitted `$defs`, `title` and `type` as well. Added a schema adapter that emits only those two root keys, inlines nested meal/soup references, and removes schema titles. Nested types, nullable prices, enums and local Pydantic validation are retained. Task identity stays stable so retrying the rejected request does not bypass existing task records. Added a regression test for the restricted schema and nested structures. Fourteen offline tests pass. A successful live request is still unverified.
+
+
+## 2026-10-13 — Fix direct property types in Research schema
+
+The next live rejection identified a second schema-subset restriction: each property needs a direct `type`; Pydantic's nullable `anyOf` was not accepted. The adapter now emits direct single types and makes unknown fields optional (omitted from `required`), avoiding unverified nullable-type extensions. Local models default omitted dates, portions and prices to `None`, so the app JSON continues to use null for unknown values. The prompt asks Tavily to omit unknown optional fields. Added recursive schema checks for every property and tests confirming omitted fields restore null values locally. Fifteen offline tests pass; live acceptance remains to be checked.
+
+
+## 2026-10-13 — Require descriptions throughout the Research schema
+
+Tavily's next rejection required a description for `meals`. The schema adapter now adds meaningful descriptions to every root/nested property and array item. It emits only the direct type, description, properties, items and required constructs shown in Tavily's reference examples; label choices are included in descriptions while enums and numeric bounds remain enforced by local Pydantic validation. Recursive tests now check nonempty descriptions and the supported wire-schema shape. Fifteen offline tests pass. The server has not yet accepted a live request, so compatibility is still not claimed as fully verified.
+
+
+## 2026-10-13 — Return to Tavily Search and OpenAI processing
+
+The user chose to return to Tavily basic Search with OpenAI extraction after the Research API schema issues. Archived the Research notebook as `05_tavily_research_backup.ipynb`. The active notebook now needs both keys and uses the configurable `OPENAI_MODEL` (default `gpt-4.1-mini`), without OpenAI web search or Tavily Research.
+
+Added a real retrieval stage in `menu_retrieval.py` instead of simply restoring the failed snippet-only flow. It opens stable menu pages, follows relevant daily-menu/PDF links, and extracts PDF text with pypdf. Tavily results provide discovery URLs only. Relevant same-domain pages are visited, with directly linked external PDFs permitted; every request/redirect rejects private/local addresses. Traversal is limited to two link levels/eight downloads per restaurant, with bounded downloads/source text. Scanned/image-only menus, JavaScript-rendered menus and blocked sources are reported as limitations and may still require manual review. No vision fallback was added.
+
+OpenAI receives the retrieved content and returns the existing evidence-rich local schema. Shared `check_menu` checks full date/day/price evidence and soup inclusion before converting to the unchanged flat app JSON. The same retrieved input can be reused to compare extraction models without repeating Tavily discovery. All selected restaurants must verify before saving. No live requests were made and the existing failed three-meal JSON was not rewritten.
+
+Validation: 20 targeted offline checks pass (16 shared/archived-helper/notebook tests plus four retrieval tests). An execution of the active extraction cell with a fake OpenAI response verifies tool-free processing, the verified output shape, and skipping paid extraction when no text is available. Retrieval tests use fake HTTP responses and a real generated text PDF to verify following a menu link, reading the PDF rather than search snippets, handling blocked/malformed files, and limiting traversal. Active notebook cells parse and use Tavily Search/OpenAI, with no Research-task calls. Live end-to-end accuracy still needs testing.
+
+
+## 2026-10-13 — PDF font support
+
+The active retrieval run successfully found Spilka’s menu PDF and extracted 4,799 characters. pypdf also warned about missing fontTools while reading some CFF Type1 font encodings during retrieval. Added `fonttools` to requirements so font decoding support is included in future installs. The user still needs to install it in the active uv environment, then rerun retrieval to regenerate text. This is a PDF-reader warning rather than an AI or Tavily error.
+
+
+## 2026-10-13 — Review validation failures from the hybrid run
+
+The user reported all four restaurants needing review. Spilka's cheese label was incorrectly rejected because the heuristic omitted gorgonzola; added gorgonzola and other common cheese names, with a regression test preserving the pancake false-positive check. Other reported failures were a Klubovňa day mismatch (a soup appeared as a main), ALDA soup surcharge evidence and Michaela's date evidence. Their exact extraction/source data is not saved in the current notebook outputs, so causes remain unresolved rather than weakening these checks. Error messages now include claimed date/day/soup price evidence for diagnosis. Local diagnostic dumps are ignored by Git.
+
+
+## 2026-10-13 — Fix ambiguity revealed by saved diagnostics
+
+Read `data/diagnostics/latest.json`. Retrieval succeeded for Spilka and Klubovňa PDFs and ALDA/Michaela HTML. Klubovňa's input included several branches' PDFs, and the model chose Wednesday despite the requested Tuesday. Restrict CK branch PDF discovery/input using the stable filename prefix, and preprocess recognised weekday/dated sections before extraction. Validation continues to compare against the original fetched content. Applied these transformations to the saved sources offline: CK input retained Tuesday's mains and excluded Wednesday's soup; ALDA retained the exact October 13 section and pricing conditions; Michaela's unusual yearless layout was left intact rather than mis-segmented.
+
+ALDA's soup list and with-menu price condition occur separately. Added optional soup `price_evidence` for the separate exact pricing quote; both quotes must occur in the source and the surcharge must match the price quote. This field stays out of the app JSON. Strengthened extraction instructions with Python's computed weekday, soups-only-inside-main-meals, main-ingredient labels and an explicit potatoes-are-not-pasta reminder. The validator rejects soups returned as mains. Each future extraction writes all responses, prepared inputs and original source text to ignored `data/diagnostics/latest-run.json`. Previously only the final restaurant's extraction was available.
+
+Michaela omits the menu year. The user explicitly chose to assume the current year when day, month and weekday match and flag it. Enabled `allow_yearless_dates` in notebook restaurant configuration. The validator requires the literal source quote, current year, matching day/month and weekday; an explicit wrong year/date still fails. Assumed meals export `date_assumed: true` and a Slovak `date_note`, also displayed in the app's existing detail dialog. No year is inferred from footer copyright. Existing Michaela extraction passes this date policy offline, but its ingredient labels still warrant review (the earlier response labelled French potatoes as pasta).
+
+Validation: 26 targeted offline tests pass (20 shared/notebook tests and six retrieval/preparation tests). Added separate soup-price evidence, soup-as-main rejection, current-year assumption and conflicting-date rejection checks. The app JavaScript parses after adding the assumption notice. No paid requests were made and `menus.json` was not rewritten. Refresh the notebook, reload setup/configuration, and retry extraction against the existing downloaded sources; neither Tavily search nor downloads need to be repeated to test these changes.
+
+
+## 2026-10-13 — Review the next extraction run
+
+The new diagnostic file confirms GPT-4.1 mini is still used. Spilka passed evidence checks but omitted its soups; ALDA omitted two soups “for illustrative clarity” and guessed beef for unspecified fašírky. Klubovňa quoted the standalone soup price 2.60 EUR to justify a 1.50 EUR surcharge; that rejection remains correct. These are extraction-quality failures, and passing quote/date checks is not a completeness proof. Tightened the extraction prompt to require all soup options and non-illustrative production data, separate pricing-rule handling and supported ingredient labels. Added rejection of explicitly illustrative subsets and unsupported beef labels.
+
+Investigated Michaela’s public HTML with one ordinary download (no AI/search credits). Its markup places all day-heading buttons before content boxes. Desktop CSS offsets align the pstruh/Cordon Bleu box (~0.3556) with Tuesday (~0.3560), whereas Wellington (~0.6370) aligns with Wednesday (~0.6325). Therefore flat DOM order alone must not be used to label those blocks; this contradicts the earlier suspicion that the latest pstruh block was for Monday. Its immediate quote mismatch is a literal `&quot;` versus decoded quote character. Normalization now decodes HTML entities, preserving source values and date/price validation. The prompt asks the model to report unresolved layout ambiguity rather than guess. A reliable semantic/browser layout adapter for this site remains future work.
+
+Recommended a controlled comparison with GPT-5.4 mini against the saved retrieved input rather than repeating Tavily discovery. No model setting or saved menu was changed automatically. Three new regression tests cover HTML-entity quote equivalence, illustrative subsets and unsupported beef claims. No paid requests were made.
+
+
+## 2026-10-13 — Recheck GPT-5.4 mini responses without API calls
+
+The saved run confirms GPT-5.4 mini. Spilka combined a literal dated-week quote with explanatory text; ALDA wrapped evidence fields in extra quotation marks. Added a preparation step that accepts only source-backed quote formatting corrections, retaining the raw response. Klubovňa’s soup row supports 1.50 EUR, while its separate price_evidence incorrectly points at the 2.60 EUR standalone note. Preparation uses the matching, fetched soup row when it explicitly contains the claimed positive price and is not marked standalone. Unsupported free-soup claims become unknown (null) only when the cited source quote has neither explicit inclusion wording nor a currency amount; the correction is recorded in notes. The strict validator still rejects unsupported numeric claims. No missing date or price is invented.
+
+Added an optional notebook cell to recheck saved diagnostics locally, without Tavily or OpenAI requests or writing menus.json. Applied it to the saved responses: Klubovňa 3, ALDA 8 and Michaela 4 meals pass evidence checks; Michaela retains the flagged current-year assumption. Spilka remains needs_review because its notes describe available soups while all soup arrays are empty. Passing evidence checks is not proof of completeness or of visual weekday-to-content alignment on Michaela’s unusual page.
+
+Validation: 32 targeted offline tests pass (26 shared/notebook and six retrieval tests), including quote repairs, wrong-year rejection, conservative soup-price handling, and missing-soup inconsistency. No paid requests made; menus.json and raw diagnostics left unchanged.
+
+
+## 2026-10-13 — Retry only failed extractions
+
+The local recheck correctly keeps Spilka blocked: its prepared Tuesday PDF contains both soups, but the saved response omitted them. Updated the extraction cell to reuse verified results when restaurant configuration, date and prepared source content match. Only missing/failed/changed results trigger an OpenAI request. Set retry_failed_only=False for an intentional full rerun. The previous validation error is sent with the source texts to guide a complete corrected response. Clarified that daily soup availability does not imply free inclusion: unknown with-meal surcharge remains null, while standalone-only prices are not imported as surcharges.
+
+Next notebook action: reload the file while retaining the kernel, run the optional saved-results recheck, then the extraction cell. For the current saved run this should request only Spilka and reuse the other three restaurants. No Tavily search/download is required. Extended the mocked notebook test to verify reuse, failed-only retry, error feedback and changed-source invalidation; all 26 targeted notebook/shared tests pass. No real API requests made and menus.json left unchanged.
+
+
+## 2026-10-13 — Recover a response after a missing-import error
+
+The retained notebook kernel lacked prepare_extraction, so local processing failed after the paid request returned. Added an explicit helper import at the start of extraction and a raw-response checkpoint under ignored data/diagnostics/pending-extraction.json before processing. Added an optional recovery cell that uses the in-memory record and previous_results to validate the returned response and restore other restaurants without API calls or changing menus.json. Keep the kernel running and execute recovery instead of repeating extraction. Extended the mocked notebook test to simulate interruption before the result is appended and verify recovery makes no additional API request.
+
+
+## 2026-10-13 — Refactor the working notebook into reusable functions
+
+The user confirmed all four restaurants passed, saved 22 meals, and verified that the local app works. Moved the workflow orchestration and extraction instructions into menu_pipeline.py. The notebook keeps restaurant configuration and six clear stages visible, with short calls for Tavily discovery, Python retrieval, OpenAI extraction/validation and explicit saving. Existing retrieval, validation, price/date policies and the app JSON format are retained. No scheduler or hosting change was introduced.
+
+Verified-result reuse still requires matching restaurant configuration, requested date and prepared sources. Failed results receive their previous validation error on retry. Comparing models intentionally requires retry_failed_only=False. The requested date now stays fixed across the notebook stages instead of being reset during search, and mismatched search/retrieval dates fail before paid extraction. API failures are not automatically retried.
+
+A complete batch checkpoint containing sources and raw responses is written atomically before local validation. Recovery now reads this disk checkpoint rather than notebook loop variables, so it survives a kernel restart. Incomplete restaurants remain needs_review for a later explicit retry; saving remains blocked until all selected restaurants pass. Setup reloads the modules; importing menu_pipeline makes no API requests. README describes reuse, recovery and the now-successful saved menu.
+
+Validation: 38 targeted offline tests pass (25 shared/notebook, seven workflow, six retrieval). Tests cover one failed restaurant among four, no duplicate request for verified results, explicit full reruns, source-change invalidation, failed API requests, date/config mismatch rejection, actual-content retrieval, and recovery after local processing failure without another request. Revalidated the actual saved diagnostic responses with old and new orchestration: identical exported meals and status for all four restaurants (7 + 3 + 8 + 4). All notebook code cells compile. No live paid requests were made, and menus.json was not changed.
+
+
+## 2026-10-13 — Add a manual terminal collection command
+
+The user chose to keep collection manual instead of scheduling it. Added `uv run python collect_menus.py`, using the existing Tavily Search → retrieval → OpenAI extraction/validation → save pipeline. Migrated the obsolete SME entries in restaurants.json to the four official restaurant configurations from the working notebook; both notebook and command now load that shared file. No schedule was created or installed.
+
+The command loads .env, uses Bratislava's current date, reports each stage and restaurant outcome, and saves only a fully verified batch. `--check` validates configuration/key presence without API requests or menu writes. Existing menus for today and the full configured name/address list skip collection unless `--force` is explicitly supplied. Force repeats discovery and all extraction; ordinary retries can reuse matching verified diagnostic responses. A local OS file lock prevents overlapping terminal commands and releases automatically after crashes. It does not lock notebook runs. OpenAI automatic request retries are disabled in this command. Existing menu data remains untouched after failed validation.
+
+Validation: 43 targeted offline tests pass (five command, seven workflow, 25 shared/notebook, six retrieval), covering saving, failed-batch preservation, same-day skip/force, overlap prevention, config validation and no-request check mode. Ran the real configuration-only command through uv: four restaurants, both keys present, gpt-5.4-mini selected. Used a temporary uv cache because the sandbox cannot access the normal home cache. No live search/extraction requests were made, and menus.json was unchanged.
+
+
+## 2026-10-15 — Repair source-backed quote omissions from the new daily run
+
+The new Thursday run retrieved the actual menus, but Spilka and ALDA failed evidence checks. Spilka's beef-soup quote invented the prefix `POLIEVKY ...` before an otherwise exact soup row. ALDA omitted the allergen-only lines between dishes and prices from its evidence. Added narrow preparation rules: restore Spilka-style soup suffixes only when the heading and exact suffix occur on the same fetched source line; restore skipped allergen-only lines only when the dish and price match exactly and the intervening line consists of valid allergen numbers (1–14). Other prose, headings, dishes and wrong prices remain rejected. Corrections are recorded in notes; raw responses are retained.
+
+Also removed the unsupported cestoviny label from ALDA's Rizoto during preparation when no explicit pasta ingredient is stated; pasta-based orzo/risoni variants remain eligible. Rechecked the saved October 15 responses offline: Spilka 7, Klubovňa 3, ALDA 8 and Michaela 4 meals pass the current evidence checks. This is not proof of completeness or every label/pairing. No paid requests were made, and menus.json and raw diagnostics were not changed. Notebook next steps: run setup to reload helpers, run the optional recheck cell, inspect results, then run save.
+
+Validation: 46 targeted offline tests pass (28 shared/notebook, seven pipeline, five command, six retrieval). New tests preserve raw responses, reject wrong prices and cross-line/non-allergen gaps, and distinguish ordinary rizoto from explicitly pasta-based variants.
+
+
+## 2026-10-15 — Package the static app for hosting
+
+Added `uv run python build_site.py` and generated `dist/site/` with exactly index.html, style.css, app.js and the latest saved menus.json (22 meals for October 15). Uses an explicit four-file allowlist instead of copying a directory recursively, so .env, Python/notebook files and diagnostics are excluded. Validates required inputs and menu date/data shape before replacing the dedicated output folder; rebuild removes stale files. dist/ was already ignored by Git. No publication, Cloudflare account changes or API requests were made. Source app and menus.json remain unchanged.
+
+Validation: two offline packaging tests pass, covering secret exclusion/stale-file cleanup and preserving an existing package when input data is invalid. Inspected the actual generated output and verified index.html asset references and the app's /menus.json path. README documents packaging, rebuilds and the prospective Cloudflare build/output settings.

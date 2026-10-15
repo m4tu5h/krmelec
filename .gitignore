@@ -219,3 +219,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Tavily task IDs, source evidence and research results
+data/tavily-research/
+
+# Local extraction diagnostics
+data/diagnostics/

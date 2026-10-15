@@ -1,12 +1,34 @@
 [
   {
-    "id": "spilka",
-    "name": "Spilka beer & restaurant",
-    "url": "https://restauracie.sme.sk/restauracia/spilka-beer-restaurant_11351-nove-mesto_2653/denne-menu"
+    "name": "Spilka",
+    "address": "Legionárska 8, Bratislava",
+    "website": "https://www.spilkarestaurant.sk/",
+    "domain": "spilkarestaurant.sk",
+    "menu_page": "https://www.spilkarestaurant.sk/ponuka/",
+    "allow_yearless_dates": true
   },
   {
-    "id": "centralna-klubovna",
     "name": "Centrálna Klubovňa",
-    "url": "https://restauracie.sme.sk/restauracia/centralna-klubovna_7011-nove-mesto_2653"
+    "address": "Krížna 64, Bratislava",
+    "website": "https://www.klubovna.sk/",
+    "domain": "klubovna.sk",
+    "menu_page": "https://www.klubovna.sk/",
+    "allow_yearless_dates": true
+  },
+  {
+    "name": "ALDA",
+    "address": "Račianska 35, Bratislava",
+    "website": "https://www.aldajedalen.sk/",
+    "domain": "aldajedalen.sk",
+    "menu_page": "https://www.aldajedalen.sk/",
+    "allow_yearless_dates": true
+  },
+  {
+    "name": "Cafe & Restaurant Michaela",
+    "address": "Kýčerského 10, Bratislava",
+    "website": "https://www.restauraciamichaela.sk/",
+    "domain": "restauraciamichaela.sk",
+    "menu_page": "https://www.restauraciamichaela.sk/denne-menu",
+    "allow_yearless_dates": true
   }
 ]
