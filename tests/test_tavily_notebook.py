@@ -28,6 +28,42 @@ def valid_menu():
 
 
 class TavilyResearchTests(unittest.TestCase):
+    def test_zero_soup_claim_uses_explicit_source_backed_with_menu_rule(self):
+        menu = valid_menu()
+        soup = menu.meals[0].soups[0]
+        soup.additional_price_eur = 0
+        soup.evidence = 'Vývar'
+        soup.price_evidence = 'Polievka 0,60 € k menu obsah 0,2 l alebo samostatne cena 2,80 € obsah 0,4 l'
+        text = TEXT + '\n' + soup.price_evidence
+        prepared = prepare_extraction(menu, {URL: text})
+        self.assertEqual(prepared.meals[0].soups[0].additional_price_eur, 0.6)
+        self.assertEqual(soup.additional_price_eur, 0, 'Raw response must remain unchanged')
+        self.assertTrue(any('explicit with-menu' in n for n in prepared.notes))
+        check_menu(prepared, date(2026,10,13), RESTAURANT, {URL: text})
+        soup.additional_price_eur = 0.9
+        prepared = prepare_extraction(menu, {URL: text})
+        with self.assertRaisesRegex(ValueError, 'Soup surcharge lacks price evidence'):
+            check_menu(prepared, date(2026,10,13), RESTAURANT, {URL: text})
+
+    def test_zero_soup_claim_is_not_repaired_using_unrelated_or_missing_prices(self):
+        for quote in ('Polievka 2,80 € samostatne', 'Kofola 0,60 € k menu',
+                      'Polievka 0,60 € samostatne alebo k menu podľa ponuky'):
+            menu = valid_menu()
+            soup = menu.meals[0].soups[0]
+            soup.additional_price_eur = 0
+            soup.evidence = 'Vývar'
+            soup.price_evidence = quote
+            text = TEXT + '\n' + quote
+            prepared = prepare_extraction(menu, {URL: text})
+            self.assertEqual(prepared.meals[0].soups[0].additional_price_eur, 0)
+            with self.assertRaisesRegex(ValueError, 'Zero soup surcharge'):
+                check_menu(prepared, date(2026,10,13), RESTAURANT, {URL: text})
+        soup.price_evidence = 'Polievka 0,70 € k menu'
+        prepared = prepare_extraction(menu, {URL: TEXT})
+        self.assertEqual(prepared.meals[0].soups[0].additional_price_eur, 0)
+        with self.assertRaisesRegex(ValueError, 'Soup price evidence missing'):
+            check_menu(prepared, date(2026,10,13), RESTAURANT, {URL: TEXT})
+
     def test_soup_ellipsis_restores_only_a_literal_same_line_suffix(self):
         menu = valid_menu()
         soup = menu.meals[0].soups[0]

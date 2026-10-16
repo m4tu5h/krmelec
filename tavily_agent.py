@@ -228,7 +228,17 @@ def prepare_extraction(menu: ResearchMenu, sources: dict) -> ResearchMenu:
             soup.evidence = item_quote(soup.evidence, text, soup.name)
             soup.price_evidence = item_quote(soup.price_evidence, text, soup.name)
             quote = soup.price_evidence or soup.evidence
-            if (soup.additional_price_eur is not None and soup.additional_price_eur > 0
+            explicit_surcharge = re.search(
+                r'\bPolievka\s+(\d+[,.]\d{1,2})\s*(?:€|EUR)\s+k\s+menu\b', quote, re.I)
+            if (soup.additional_price_eur == 0 and explicit_surcharge
+                    and normalized(quote) in normalized(text)
+                    and not re.search(r'v\s+cene|zahrnut|súčasťou\s+(?:menu|ceny)', quote, re.I)):
+                amount = float(explicit_surcharge.group(1).replace(',', '.'))
+                if amount > 0:
+                    soup.additional_price_eur = amount
+                    changes.append(f'{soup.name}: free-soup claim corrected to {amount:.2f} EUR '
+                                   'from the explicit with-menu soup pricing rule.')
+            elif (soup.additional_price_eur is not None and soup.additional_price_eur > 0
                     and normalized(soup.evidence) in normalized(text)
                     and price_in_quote(soup.additional_price_eur, soup.evidence)
                     and not re.search(r'samostatn', soup.evidence, re.I)

@@ -248,3 +248,12 @@ Validation: 46 targeted offline tests pass (28 shared/notebook, seven pipeline, 
 Added `uv run python build_site.py` and generated `dist/site/` with exactly index.html, style.css, app.js and the latest saved menus.json (22 meals for October 15). Uses an explicit four-file allowlist instead of copying a directory recursively, so .env, Python/notebook files and diagnostics are excluded. Validates required inputs and menu date/data shape before replacing the dedicated output folder; rebuild removes stale files. dist/ was already ignored by Git. No publication, Cloudflare account changes or API requests were made. Source app and menus.json remain unchanged.
 
 Validation: two offline packaging tests pass, covering secret exclusion/stale-file cleanup and preserving an existing package when input data is invalid. Inspected the actual generated output and verified index.html asset references and the app's /menus.json path. README documents packaging, rebuilds and the prospective Cloudflare build/output settings.
+
+
+## 2026-10-16 — Correct ALDA's free-soup extraction against its explicit price rule
+
+Friday's saved run uses GPT-5.4 mini and returns ALDA soup surcharge 0 despite quoting `Polievka 0,60 € k menu obsah 0,2 l alebo samostatne cena 2,80 € obsah 0,4 l`. Its notes incorrectly describe that paid with-menu price as inclusion. The existing validator correctly blocked publication. Added a narrow preparation rule that replaces an unsupported zero claim with the positive amount from the exact `Polievka <amount> € k menu` rule when that quote is present in the fetched source and has no inclusion wording. It never derives the surcharge from the standalone price or drink prices; unknown/no-price handling and strict validation remain. Raw extraction is retained and the correction is recorded in prepared notes.
+
+Offline recheck of the actual October 16 diagnostics passes Spilka 6, Klubovňa 3, ALDA 8 and Michaela 4 meals (21 total). ALDA's three soup options correctly have 0.60 EUR surcharges. No new paid requests were made and menus.json was left unchanged. Next notebook actions: setup, optional recheck saved responses, review, save; push updated menus.json to update the hosted app.
+
+Validation: 37 targeted tests pass (30 shared/notebook and seven pipeline). Added regression cases for source-backed correction, preservation of raw response, rejection of wrong positive amounts, standalone/drink prices and missing/forged quote evidence.
