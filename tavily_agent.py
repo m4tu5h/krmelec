@@ -388,7 +388,7 @@ def check_menu(menu: ResearchMenu, target: date, restaurant: dict, sources: dict
         if 'hovädzie' in meal.labels and not re.search(r'hoväd|hov\.|beef|roastbeef', meal.name + ' ' + meal.evidence, re.I):
             raise ValueError(f'Beef label lacks ingredient evidence: {meal.name}')
         if 'syr' in meal.labels and not re.search(
-                r'syr|syrov|encián|bryndz|oštiep|niva|parmez|cheddar|mozzarell|gorgonzol|eidam|ementál|camembert',
+                r'syr|syrov|encián|hermel[íi]n|bryndz|oštiep|niva|parmez|cheddar|mozzarell|gorgonzol|eidam|ementál|camembert',
                 meal.name + ' ' + meal.evidence, re.I):
             raise ValueError(f'Cheese label lacks ingredient evidence: {meal.name}')
         if meal.price_eur is not None and not price_in_quote(meal.price_eur, meal.evidence):

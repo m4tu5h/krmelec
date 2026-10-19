@@ -7,7 +7,7 @@ The working flow searches restaurant websites for today's meals, saves structure
 ## Setup with uv
 
 ```sh
-uv venv --python 3.9
+uv venv --python 3.13
 uv pip install --python .venv/bin/python -r requirements.txt
 cp .env.example .env
 ```

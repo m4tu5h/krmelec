@@ -308,6 +308,19 @@ class TavilyResearchTests(unittest.TestCase):
                            {URL: TEXT+'\n'+meal.evidence})
         self.assertIn('syr', meals[0]['labels'])
 
+    def test_hermelin_is_recognized_as_cheese(self):
+        for name in ('Vyprážaný hermelín, baby varené zemiaky, brusnie, obloha',
+                     'Vyprážaný hermelin'):
+            with self.subTest(name=name):
+                menu = valid_menu()
+                meal = menu.meals[0]
+                meal.name = name
+                meal.evidence = name + ' 7,50 €'
+                meal.labels = ['syr']
+                meals = check_menu(menu, date(2026, 10, 13), RESTAURANT,
+                                   {URL: TEXT + '\n' + meal.evidence})
+                self.assertIn('syr', meals[0]['labels'])
+
     def test_pancakes_not_labelled_cheese_from_allergens(self):
         menu = valid_menu()
         meal = menu.meals[0]
